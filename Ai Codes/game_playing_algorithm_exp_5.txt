@@ -69,7 +69,7 @@ def find_best_move(board):
     return best_move
 
 # Example usage
-board = [['X', '.', '.'],
+board = [['X', 'X', '.'],
          ['.', 'O', 'O'],
          ['X', 'X', 'O']]
 

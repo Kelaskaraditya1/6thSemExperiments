@@ -1,0 +1,145 @@
+//<-------------------Run on Colab------------>
+
+
+
+
+
+//<--------- for optimal path ---------------->
+
+
+
+
+
+from collections import deque
+
+# Function to perform Breadth First Search
+def bfs(graph, start, goal):
+    # Queue for BFS
+    queue = deque([(start, [start])])
+    visited = set()
+
+    while queue:
+        current, path = queue.popleft()
+        if current == goal:
+            return path
+        visited.add(current)
+
+        for neighbor in graph.get(current, []):
+            if neighbor not in visited:
+                queue.append((neighbor, path + [neighbor]))
+
+    return None  # Goal not reachable
+
+# User input for number of nodes, start node, goal node, number of edges, and edges
+num_nodes = int(input("Enter the number of nodes: "))
+nodes = [input(f"Enter node {i + 1}: ").upper() for i in range(num_nodes)]
+
+start_node = input("Enter the start node: ").upper()
+goal_node = input("Enter the goal node: ").upper()
+
+num_edges = int(input("Enter the number of edges: "))
+edges = []
+for i in range(num_edges):
+    edge = input(f"Enter edge {i + 1} (node1 node2): ").split()
+    edges.append((edge[0].upper(), edge[1].upper()))
+
+# Create graph from edges
+graph = {node: [] for node in nodes}
+for edge in edges:
+    graph[edge[0]].append(edge[1])
+    graph[edge[1]].append(edge[0])
+
+# Perform BFS
+optimal_path = bfs(graph, start_node, goal_node)
+
+if optimal_path:
+    print("Optimal path:", ' -> '.join(optimal_path))
+
+    # BFS traversal order
+    bfs_order = bfs(graph, start_node, goal_node)
+    print("BFS traversal order:", ' -> '.join(bfs_order))
+else:
+    print("Goal node is not reachable from the start node.")
+
+
+
+
+input :
+
+
+Enter the number of nodes: 11
+Enter node 1: S
+Enter node 2: A
+Enter node 3: B
+Enter node 4: C
+Enter node 5: D
+Enter node 6: G
+Enter node 7: H
+Enter node 8: E
+Enter node 9: F
+Enter node 10: I
+Enter node 11: K
+Enter the start node: S
+Enter the goal node: K
+Enter the number of edges: 10
+Enter edge 1 (node1 node2): S A
+Enter edge 2 (node1 node2): S B
+Enter edge 3 (node1 node2): A C
+Enter edge 4 (node1 node2): A D
+Enter edge 5 (node1 node2): B G
+Enter edge 6 (node1 node2): B H
+Enter edge 7 (node1 node2): C E
+Enter edge 8 (node1 node2): C F
+Enter edge 9 (node1 node2): G I
+Enter edge 10 (node1 node2): E K
+Optimal path: S -> A -> C -> E -> K
+BFS traversal order: S -> A -> C -> E -> K
+
+
+
+
+
+
+// <---------------for complete traversal---------------------->
+
+
+
+
+
+from collections import defaultdict, deque
+
+# Function to perform Breadth First Search
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])
+    traversal_order = []
+
+    while queue:
+        current = queue.popleft()
+        traversal_order.append(current)
+        visited.add(current)
+
+        for neighbor in graph[current]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    return traversal_order
+
+# Example usage
+if __name__ == "__main__":
+    # Example graph represented as an adjacency list
+    graph = {
+        'S': ['A', 'B'],
+        'A': ['C', 'D'],
+        'B': ['G', 'H'],
+        'C': ['E','F'],
+        'G': ['I'],
+        'E': ['K'],
+        'D':[],
+        'H':[],'F':[],'I':[],'K':[]
+    }
+
+    start_node = 'S'  # Starting node for BFS
+    traversal_order = bfs(graph, start_node)
+    print("BFS Traversal Order:", traversal_order)

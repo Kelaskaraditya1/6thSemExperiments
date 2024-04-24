@@ -1,0 +1,127 @@
+<------------------ A* Algorithm----------------------------->
+
+
+
+
+import heapq
+
+class Node:
+    def __init__(self, name, heuristic_value):
+        self.name = name
+        self.heuristic_value = heuristic_value
+        self.g = float('inf')  # Cost from start node to current node
+        self.parent = None
+        self.neighbors = {}  # Dictionary to store neighbors and their costs
+
+    def f(self):
+        return self.g + self.heuristic_value
+
+def a_star(graph, start_name, goal_name):
+    open_set = []
+    closed_set = set()
+
+    start_node = graph[start_name]
+    start_node.g = 0
+    heapq.heappush(open_set, (start_node.f(), id(start_node), start_node))
+
+    while open_set:
+        _, _, current_node = heapq.heappop(open_set)
+
+        if current_node.name == goal_name:
+            path = []
+            optimal_cost = current_node.g
+            while current_node:
+                path.append(current_node.name)
+                current_node = current_node.parent
+            return path[::-1], optimal_cost
+
+        closed_set.add(current_node.name)
+
+        for neighbor_name, cost_to_neighbor in current_node.neighbors.items():
+            neighbor_node = graph[neighbor_name]
+
+            tentative_g = current_node.g + cost_to_neighbor
+            if tentative_g < neighbor_node.g:
+                neighbor_node.g = tentative_g
+                neighbor_node.parent = current_node
+
+                if neighbor_name not in closed_set:
+                    heapq.heappush(open_set, (neighbor_node.f(), id(neighbor_node), neighbor_node))
+
+    return None, None  # No path found
+
+# Example usage
+def get_user_input():
+    num_nodes = int(input("Enter the number of nodes: "))
+    nodes = []
+    for _ in range(num_nodes):
+        name = input("Enter node name: ")
+        heuristic_value = float(input(f"Enter heuristic value for {name}: "))
+        nodes.append(Node(name, heuristic_value))
+
+    start_node = input("Enter the start node: ")
+    goal_node = input("Enter the goal node: ")
+
+    graph = {node.name: node for node in nodes}
+
+    num_edges = int(input("Enter the number of edges: "))
+    for _ in range(num_edges):
+        source, dest, cost = input("Enter edge (source dest cost): ").split()
+        cost = float(cost)
+        graph[source].neighbors[dest] = cost
+
+    return graph, start_node, goal_node
+
+class Edge:
+    def __init__(self, neighbor, cost):
+        self.neighbor = neighbor
+        self.cost = cost
+
+def main():
+    graph, start_node, goal_node = get_user_input()
+    path, optimal_cost = a_star(graph, start_node, goal_node)
+
+    if path:
+        print("Optimal path:", ' -> '.join(path))
+        print("Optimal cost:", optimal_cost)
+    else:
+        print("No path found.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+<---------------------------------input--------------------->
+
+
+Enter the number of nodes: 7
+Enter node name: S
+Enter heuristic value for S: 14
+Enter node name: B
+Enter heuristic value for B: 12
+Enter node name: C
+Enter heuristic value for C: 11
+Enter node name: F
+Enter heuristic value for F: 11
+Enter node name: E
+Enter heuristic value for E: 4
+Enter node name: G
+Enter heuristic value for G: 0
+Enter node name: D
+Enter heuristic value for D: 6
+Enter the start node: S
+Enter the goal node: G
+Enter the number of edges: 9
+Enter edge (source dest cost): S B 4
+Enter edge (source dest cost): S C 3
+Enter edge (source dest cost): B F 5
+Enter edge (source dest cost): B E 12
+Enter edge (source dest cost): C E 10
+Enter edge (source dest cost): F G 16
+Enter edge (source dest cost): E G 5
+Enter edge (source dest cost): C D 7
+Enter edge (source dest cost): D E 2
+Optimal path: S -> C -> D -> E -> G
+Optimal cost: 17.0
